@@ -20,4 +20,7 @@ public partial class User
     public virtual Role Role { get; set; } = null!;
 
     public virtual ICollection<TeacherPerCourse> TeacherPerCourses { get; set; } = new List<TeacherPerCourse>();
+    
+    public string? ProfilePicture { get; set; }
+
 }

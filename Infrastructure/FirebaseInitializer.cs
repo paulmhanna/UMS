@@ -1,3 +1,6 @@
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+
 namespace Infrastructure;
 
 public class FirebaseInitializer
@@ -6,7 +9,7 @@ public class FirebaseInitializer
     {
         FirebaseApp.Create(new AppOptions
         {
-            Credential = GoogleCredential.FromFile("path/to/serviceAccountKey.json")
+            Credential = GoogleCredential.FromFile("../Infrastructure/credentials.json")
         });
     }
 }

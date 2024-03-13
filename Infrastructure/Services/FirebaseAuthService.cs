@@ -1,18 +1,38 @@
+using Firebase.Auth;
+using FirebaseAdmin;
+using FirebaseAdmin.Auth;
+using FirebaseAuth;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Http;
+using FirebaseAuthException = FirebaseAdmin.Auth.FirebaseAuthException;
+using User = Persistence.Entities.User;
+
 namespace Infrastructure.Services;
 
-public class FirebaseAuth
+public class FirebaseAuthService : IFirebaseAuthService
 {
-    public async Task<string> RegisterUserAsync(string email, string password)
-    {
-        // Use Firebase Authentication SDK to register a new user
-        var user = await FirebaseAuth.DefaultInstance.CreateUserWithEmailAndPasswordAsync(email, password);
-        return user.User.Uid; // Return user ID
-    }
+    private readonly FirebaseAuthClient _firebaseAuth;
 
-    public async Task<string> LoginUserAsync(string email, string password)
+    public FirebaseAuthService(FirebaseAuthClient firebaseAuth)
     {
-        // Use Firebase Authentication SDK to sign in user
-        var user = await FirebaseAuth.DefaultInstance.SignInWithEmailAndPasswordAsync(email, password);
-        return user.User.Uid; // Return user ID
+        _firebaseAuth = firebaseAuth;
+    }
+    public async Task<string?> RegisterUserAsync(string email, string password)
+    {
+        var userCredentials = await _firebaseAuth.CreateUserWithEmailAndPasswordAsync(email, password);
+        return userCredentials is null ? null : await userCredentials.User.GetIdTokenAsync();
+    }
+    
+    public async Task<string?> LoginUserAsync(string email, string password)
+    {
+        var userCredentials = await _firebaseAuth.SignInWithEmailAndPasswordAsync(email, password);
+        return userCredentials is null ? null : await userCredentials.User.GetIdTokenAsync();
+    }
+    
+    public void SignOut() => _firebaseAuth.SignOut(); 
+    
+    public string GetUserUUID(string email)
+    {
+        return FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.GetUserByEmailAsync(email).Result.Uid;
     }
 }

@@ -1,26 +1,30 @@
 using Application.Commands;
 using Application.Services;
 using MediatR;
+using NpgsqlTypes;
+using Persistence.Entities;
 
 namespace Application.Handlers;
 
-public class CourseCommandHandler : IRequestHandler<CreateCourseCommand, bool>
+public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, bool>
 {
     private readonly ICourseService _courseService;
 
-    public CourseCommandHandler(ICourseService courseService)
+    public CreateCourseCommandHandler(ICourseService courseService)
     {
         _courseService = courseService;
     }
     
-    public Task<bool> Handle(CreateCourseCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(CreateCourseCommand request, CancellationToken cancellationToken)
     {
-        _courseService.CreateCourse()
-        _context.Courses.Add(new Course
+        var dateFrom = request.EnrolmentDateFrom;
+        var dateTo = request.EnrolmentDateTo;
+        return await _courseService.CreateCourse(new Course
         {
-            Name = course.Name,
-            MaxStudentsNumber = course.MaxStudentsNumber,
-            EnrolmentDateRange = course.EnrolmentDateRange
+            Name = request.Name,
+            MaxStudentsNumber = request.MaxStudentsNumber,
+            EnrolmentDateRange = new NpgsqlRange<DateOnly>(request.EnrolmentDateFrom, request.EnrolmentDateTo) 
         });
+        
     }
 }

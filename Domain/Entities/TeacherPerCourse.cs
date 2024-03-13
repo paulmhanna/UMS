@@ -19,3 +19,4 @@ public partial class TeacherPerCourse
 
     public virtual ICollection<TeacherPerCoursePerSessionTime> TeacherPerCoursePerSessionTimes { get; set; } = new List<TeacherPerCoursePerSessionTime>();
 }
+        
